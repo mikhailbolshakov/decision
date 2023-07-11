@@ -1,0 +1,121 @@
+# http server configuration
+http:
+  # listens on port
+  port: 8996
+  # trace requests/responses
+  trace: ${HTTP_TRACE_ENABLED|false}
+  # |---Wait---|---TLS Handshake---|---Req.Headers---|---Request body---|---Response---|---Idle---|
+  # <- - - - - - - - - - - - - - - - - - - - - - - - --------write-timeout-sec--------->
+  # <-------------------------read-timeout-sec------------------------>
+  # write-timeout-sec normally covers the time from the end of the request header read to the end of the response write
+  # but in HTTPS covers the packets written as part of the TLS handshake
+  write-timeout-sec: ${HTTP_WRITE_TIMEOUT_SEC|60}
+  # read-timeout-sec covers the time from when the connection is accepted to when the request body is fully read
+  read-timeout-sec: ${HTTP_READ_TIMEOUT_SEC|60}
+  # http server write buffer size
+  write-buffer-size-bytes: ${HTTP_WRITE_BUFFER_SIZE_BYTES|1024}
+  # http server read buffer size
+  read-buffer-size-bytes: ${HTTP_READ_BUFFER_SIZE_BYTES|1024}
+
+# storages configuration
+storages:
+  # aerospike
+  aero:
+    host: ${AERO_HOST|localhost}
+    port: ${AERO_PORT|33000}
+  # database client
+  database:
+    # local path to migration folder
+    mig-path: ${EV2GOROOT|}/ocpi/db/migrations
+    # db master config
+    master:
+      # database name
+      dbname: ${OCPI_DB_MASTER_NAME|ev2go}
+      # db username
+      user: ocpi
+      # db password
+      password: ${OCPI_DB_MASTER_PASSWORD|ocpi}
+      # db port
+      port: ${OCPI_DB_MASTER_PORT|35432}
+      # host for master (read-write) database
+      host: ${OCPI_DB_MASTER_HOST|localhost}
+    # db slave config
+    slave:
+      # database name
+      dbname: ${OCPI_DB_SLAVE_NAME|ev2go}
+      # db username
+      user: ocpi
+      # db password
+      password: ${OCPI_DB_SLAVE_PASSWORD|ocpi}
+      # db port
+      port: ${OCPI_DB_SLAVE_PORT|35432}
+      # host for master (read-write) database
+      host: ${OCPI_DB_SLAVE_HOST|localhost}
+
+# logging configuration
+log:
+  # level
+  level: ${OCPI_LOG_LEVEL|trace}
+  # output format (plain, json)
+  format: ${OCPI_LOG_FORMAT|plain}
+  # if service info is appeared in log
+  service: ${OCPI_LOG_SERVICE|true}
+  # if context info is appeared in log
+  context: ${OCPI_LOG_CONTEXT|true}
+
+# cluster configuration
+cluster:
+  # cluster size (used by RAFT leader election algo)
+  size: ${OCPI_CLUSTER_SIZE|1}
+  # path to log
+  log: "/tmp/raft.log"
+
+# monitoring
+monitoring:
+  # enabled
+  enabled: ${OCPI_MONITORING_ENABLED|false}
+  # on which port metrics are exposed
+  port: ${OCPI_MONITORING_PORT|9000}
+  # on which url metrics are exposed
+  url: /metrics
+  # indicates to expose internal GO engine metrics
+  go-metrics: ${OCPI_GOMETRICS_ENABLED|false}
+
+# profiling
+profile:
+  # profiling enabled
+  enabled: ${OCPI_PROFILE_ENABLED|false}
+  # port on which profile dump is available
+  port: ${OCPI_PROFILE_PORT|52002}
+
+ocpi:
+  local:
+    url: ${OCPI_URL|http://localhost:8996}
+    api-key: ${OCPI_SDK_APIKEY|}
+    platform:
+      id: ${OCPI_LOCAL_PLATFORM_ID|ocpi.ev2go.io}
+      name: ${OCPI_LOCAL_PLATFORM_NAME|EV2GO}
+      token-a: ${OCPI_LOCAL_PLATFORM_TOKEN_A|820940e6-ca2e-4d47-9ca8-2cad7f5424b2}
+      role: ${OCPI_LOCAL_PLATFORM_ROLE|HUB}
+      versions:
+        - 2.2.1
+    party:
+      party-id: ${OCPI_LOCAL_PARTY|EV2GO}
+      country-code: ${OCPI_LOCAL_PARTY_COUNTRY|RS}
+      roles: ${OCPI_LOCAL_PARTY_ROLE|HUB}
+    webhook:
+      mock: ${OCPI_LOCAL_WEBHOOK_MOCK|false}
+      timeout: ${OCPI_LOCAL_WEBHOOK_TIMEOUT|10}
+  remote:
+    mock: ${OCPI_REMOTE_PLATFORM_MOCK|false}
+    timeout: ${OCPI_REMOTE_TO|60}
+  emulator:
+    id: ${OCPIEM_LOCAL_PLATFORM_ID|ocpiem.ev2go.io}
+    name: ${OCPIEM_LOCAL_PLATFORM_NAME|EV2GO_OCPI_EMULATOR}
+    token-a: ${OCPIEM_LOCAL_PLATFORM_TOKEN_A|820940e6-ca2e-4d47-9ca8-2cad7f5424b5}
+    role: ${OCPIEM_LOCAL_PLATFORM_ROLE|HUB}
+    version-ep: ${OCPIEM_VERSION_EP|http://localhost:8994/ocpi/versions}
+    url: ${OCPIEM_URL|http://localhost:8994}
+    api-key: ${OCPIEM_SDK_APIKEY|}
+
+
