@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  pg:
+    container_name: decision-pg
+    networks:
+      - decision
+    image: "postgis/postgis:15-3.3"
+    ports:
+      - "55432:5432"
+    volumes:
+      - /var/decision/docker/volumes/pg:/var/lib/postgresql/data
+      - ./infra/pg/init.sh:/docker-entrypoint-initdb.d/init.sh
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=decision
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
+  mailhog:
+    container_name: decision-mailhog
+    image: "mailhog/mailhog"
+    ports:
+      - "21025:1025"
+      - "28025:8025"
+    networks:
+      - decision
+
+networks:
+  decision:
+    external: true

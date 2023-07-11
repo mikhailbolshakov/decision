@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/mikhailbolshakov/decision"
 	"github.com/mikhailbolshakov/decision/http"
+	"github.com/mikhailbolshakov/decision/http/sys"
 	"github.com/mikhailbolshakov/decision/kit"
 	kitHttp "github.com/mikhailbolshakov/decision/kit/http"
 )
@@ -42,7 +43,7 @@ func (s *ServiceImpl) initHttpServer(ctx context.Context) error {
 
 	// decision routing
 	routeBuilder := http.NewRouteBuilder(s.http, mdw)
-	//routeBuilder.SetRoutes(platform.GetRoutes(platform.NewController(s.localPlatformService)))
+	routeBuilder.SetRoutes(sys.GetRoutes(sys.NewController()))
 
 	return routeBuilder.Build()
 }

@@ -36,6 +36,11 @@ func (_m *Controller) HasRoles(roles ...string) func(context.Context, *http.Requ
 	return r0
 }
 
+// Health provides a mock function with given fields: _a0, _a1
+func (_m *Controller) Health(_a0 http.ResponseWriter, _a1 *http.Request) {
+	_m.Called(_a0, _a1)
+}
+
 // MyClientProfile provides a mock function with given fields: ctx, r
 func (_m *Controller) MyClientProfile(ctx context.Context, r *http.Request) (bool, error) {
 	ret := _m.Called(ctx, r)

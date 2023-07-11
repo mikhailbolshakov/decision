@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+# Perform all actions as $POSTGRES_USER
+export PGUSER="$POSTGRES_USER"
+
+echo "[INIT] Init schemas $POSTGRES_DB"
+psql -U $POSTGRES_USER $POSTGRES_DB <<-'EOSQL'
+  CREATE ROLE auth LOGIN PASSWORD 'auth' NOINHERIT CREATEDB;
+  CREATE SCHEMA auth AUTHORIZATION auth;
+  GRANT USAGE ON SCHEMA auth TO PUBLIC;
+EOSQL
+
+echo "[INIT] end"

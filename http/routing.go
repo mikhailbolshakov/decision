@@ -130,12 +130,6 @@ func (r *Route) DELETE() *Route {
 	return r
 }
 
-// Auth marks route as authorized by token with types (A, B, C)
-func (r *Route) Auth(tokenTypes ...string) *Route {
-	r.authTokens = tokenTypes
-	return r
-}
-
 // NoAuth marks route as not authorized
 func (r *Route) NoAuth() *Route {
 	r.authTokens = nil
