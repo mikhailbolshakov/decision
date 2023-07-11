@@ -3,7 +3,10 @@ package bootstrap
 import (
 	"context"
 	"github.com/mikhailbolshakov/decision"
+	domain "github.com/mikhailbolshakov/decision/domain/decision"
+	"github.com/mikhailbolshakov/decision/domain/decision/impl"
 	"github.com/mikhailbolshakov/decision/http"
+	decisionHttp "github.com/mikhailbolshakov/decision/http/decision"
 	"github.com/mikhailbolshakov/decision/http/sys"
 	"github.com/mikhailbolshakov/decision/kit"
 	kitHttp "github.com/mikhailbolshakov/decision/kit/http"
@@ -12,9 +15,10 @@ import (
 // ServiceImpl implements a service bootstrapping
 // all dependencies between layers must be specified here
 type ServiceImpl struct {
-	cfg       *decision.Config
-	loadCfgFn func() (*decision.Config, error)
-	http      *kitHttp.Server
+	cfg             *decision.Config
+	loadCfgFn       func() (*decision.Config, error)
+	http            *kitHttp.Server
+	decisionService domain.DecisionService
 }
 
 // New creates a new instance of the service
@@ -22,6 +26,7 @@ func New() kit.Service {
 	s := &ServiceImpl{
 		loadCfgFn: decision.LoadConfig,
 	}
+	s.decisionService = impl.NewDecisionService()
 	return s
 }
 
@@ -44,6 +49,7 @@ func (s *ServiceImpl) initHttpServer(ctx context.Context) error {
 	// decision routing
 	routeBuilder := http.NewRouteBuilder(s.http, mdw)
 	routeBuilder.SetRoutes(sys.GetRoutes(sys.NewController()))
+	routeBuilder.SetRoutes(decisionHttp.GetRoutes(decisionHttp.NewController(s.decisionService)))
 
 	return routeBuilder.Build()
 }
